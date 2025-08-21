@@ -1,11 +1,15 @@
+-- Get the ESX Shared Object
+ESX = exports['es_extended']:getSharedObject()
+
 -- Rate limiting storage
 local playerCooldowns = {}
 local COOLDOWN_TIME = 1000 -- 1 second cooldown
 
 -- Security logging
 local function logSecurity(source, action, details)
+    local xPlayer = ESX.GetPlayerFromId(source)
     local playerName = GetPlayerName(source) or 'Unknown'
-    local identifier = exports.qbx_core:GetPlayer(source)?.PlayerData?.citizenid or 'Unknown'
+    local identifier = xPlayer and xPlayer.getIdentifier() or 'Unknown'
     print(('[SECURITY] %s (ID: %s, Source: %s) - %s: %s'):format(playerName, identifier, source, action, details))
 end
 
@@ -54,7 +58,7 @@ end
 
 -- Player validation
 local function validatePlayer(source)
-    local player = exports.qbx_core:GetPlayer(source)
+    local player = ESX.GetPlayerFromId(source)
     if not player then
         logSecurity(source, 'INVALID_PLAYER', 'Player not found in core')
         return false
